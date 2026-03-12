@@ -1,0 +1,27 @@
+kind = "mobile"
+previewPath = "/"
+title = "School Bus Tracker"
+version = "1.0.0"
+id = "artifacts/bus-tracker"
+router = "expo-domain"
+
+[[integratedSkills]]
+name = "expo"
+version = "1.0.0"
+
+[[services]]
+ensurePreviewReachable = "/status"
+localPort = 24980
+name = "expo"
+paths = ["/"]
+
+[services.development]
+run = "pnpm --filter @workspace/bus-tracker run dev"
+
+[services.env]
+PORT = "24980"
+BASE_PATH = "/"
+
+[services.production]
+build = ["pnpm", "--filter", "@workspace/bus-tracker", "run", "build"]
+run = ["pnpm", "--filter", "@workspace/bus-tracker", "run", "serve"]
