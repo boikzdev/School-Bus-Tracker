@@ -1,8 +1,9 @@
 import React from "react";
-import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
+import MapView, { Marker, PROVIDER_DEFAULT, Circle } from "react-native-maps";
 import { StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "@/constants/colors";
+import { CITY_CENTER } from "@/context/BusContext";
 
 const C = Colors.light;
 
@@ -43,6 +44,25 @@ export default function MapWrapper({
       showsMyLocationButton={false}
       showsCompass={false}
     >
+      <Marker
+        coordinate={{ latitude: CITY_CENTER.lat, longitude: CITY_CENTER.lng }}
+        title="City Center"
+        description="Fixed destination"
+        anchor={{ x: 0.5, y: 0.5 }}
+      >
+        <View style={styles.cityMarker}>
+          <Ionicons name="location" size={18} color="#fff" />
+        </View>
+      </Marker>
+
+      <Circle
+        center={{ latitude: CITY_CENTER.lat, longitude: CITY_CENTER.lng }}
+        radius={1000}
+        strokeColor="rgba(245,166,35,0.5)"
+        fillColor="rgba(245,166,35,0.08)"
+        strokeWidth={2}
+      />
+
       {busCoords && (
         <Marker
           coordinate={{ latitude: busCoords.lat, longitude: busCoords.lng }}
@@ -59,6 +79,21 @@ export default function MapWrapper({
 }
 
 const styles = StyleSheet.create({
+  cityMarker: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: C.accent,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 3,
+    borderColor: "#fff",
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 4,
+  },
   busMarker: {
     width: 44,
     height: 44,

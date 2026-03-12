@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useBus } from "@/context/BusContext";
+import { useBus, CITY_CENTER } from "@/context/BusContext";
 import BusSelector from "@/components/BusSelector";
 import DashboardCard from "@/components/DashboardCard";
 import ArrivingAlert from "@/components/ArrivingAlert";
@@ -80,29 +80,35 @@ export default function TrackScreen() {
   };
 
   const centerOnUser = () => {
-    if (userLocation && mapRef.current) {
+    if (mapRef.current) {
+      const lat = userLocation ? userLocation.coords.latitude : CITY_CENTER.lat;
+      const lng = userLocation ? userLocation.coords.longitude : CITY_CENTER.lng;
       mapRef.current.animateToRegion({
-        latitude: userLocation.coords.latitude,
-        longitude: userLocation.coords.longitude,
+        latitude: lat,
+        longitude: lng,
         latitudeDelta: 0.01,
         longitudeDelta: 0.01,
       });
     }
   };
 
-  const initialRegion = userLocation
-    ? {
-        latitude: userLocation.coords.latitude,
-        longitude: userLocation.coords.longitude,
-        latitudeDelta: 0.05,
-        longitudeDelta: 0.05,
-      }
-    : {
-        latitude: 3.139,
-        longitude: 101.6869,
-        latitudeDelta: 0.05,
-        longitudeDelta: 0.05,
-      };
+  const centerOnCity = () => {
+    if (mapRef.current) {
+      mapRef.current.animateToRegion({
+        latitude: CITY_CENTER.lat,
+        longitude: CITY_CENTER.lng,
+        latitudeDelta: 0.08,
+        longitudeDelta: 0.08,
+      });
+    }
+  };
+
+  const initialRegion = {
+    latitude: CITY_CENTER.lat,
+    longitude: CITY_CENTER.lng,
+    latitudeDelta: 0.08,
+    longitudeDelta: 0.08,
+  };
 
   const topOffset = Platform.OS === "web" ? insets.top + 67 : insets.top;
 
@@ -145,6 +151,13 @@ export default function TrackScreen() {
             activeOpacity={0.8}
           >
             <Ionicons name="locate" size={20} color={C.primary} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.mapBtn}
+            onPress={centerOnCity}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="location" size={20} color={C.accent} />
           </TouchableOpacity>
           {busCoords && (
             <TouchableOpacity
@@ -216,7 +229,6 @@ export default function TrackScreen() {
           style={[styles.simBtn, simulationMode && styles.simBtnActive]}
           onPress={toggleSimulation}
           activeOpacity={0.85}
-          disabled={!userLocation}
         >
           {simulationMode ? (
             <Animated.View

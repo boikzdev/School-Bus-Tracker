@@ -31,6 +31,22 @@ export const BUS_IDS: BusId[] = [
   "Bus_08",
 ];
 
+export const CITY_CENTER = {
+  lat: 27.230467437631734,
+  lng: 94.07840743451857,
+};
+
+const DEFAULT_BUS_OFFSETS: Record<BusId, { lat: number; lng: number }> = {
+  Bus_01: { lat: CITY_CENTER.lat + 0.012, lng: CITY_CENTER.lng - 0.018 },
+  Bus_02: { lat: CITY_CENTER.lat - 0.008, lng: CITY_CENTER.lng + 0.022 },
+  Bus_03: { lat: CITY_CENTER.lat + 0.020, lng: CITY_CENTER.lng + 0.010 },
+  Bus_04: { lat: CITY_CENTER.lat - 0.015, lng: CITY_CENTER.lng - 0.012 },
+  Bus_05: { lat: CITY_CENTER.lat + 0.005, lng: CITY_CENTER.lng + 0.030 },
+  Bus_06: { lat: CITY_CENTER.lat - 0.025, lng: CITY_CENTER.lng + 0.005 },
+  Bus_07: { lat: CITY_CENTER.lat + 0.018, lng: CITY_CENTER.lng - 0.030 },
+  Bus_08: { lat: CITY_CENTER.lat - 0.010, lng: CITY_CENTER.lng + 0.015 },
+};
+
 export type BusCoords = {
   lat: number;
   lng: number;
@@ -69,7 +85,7 @@ function haversineDistance(
 }
 
 const initialBusData: BusData = Object.fromEntries(
-  BUS_IDS.map((id) => [id, null])
+  BUS_IDS.map((id) => [id, DEFAULT_BUS_OFFSETS[id as BusId]])
 ) as BusData;
 
 const BusContext = createContext<BusContextType | null>(null);
@@ -114,7 +130,10 @@ export function BusProvider({ children }: { children: React.ReactNode }) {
             if (data && typeof data.lat === "number" && typeof data.lng === "number") {
               setBusData((prev) => ({ ...prev, [busId]: data }));
             } else {
-              setBusData((prev) => ({ ...prev, [busId]: null }));
+              setBusData((prev) => ({
+                ...prev,
+                [busId]: DEFAULT_BUS_OFFSETS[busId as BusId],
+              }));
             }
           },
           () => {
@@ -131,13 +150,19 @@ export function BusProvider({ children }: { children: React.ReactNode }) {
   const toggleSimulation = useCallback(() => {
     setSimulationMode((prev) => {
       const next = !prev;
-      if (next && userLocation) {
+      if (next) {
         let step = 0;
-        const totalSteps = 30;
-        const startLat = userLocation.coords.latitude + 0.05;
-        const startLng = userLocation.coords.longitude + 0.05;
-        const endLat = userLocation.coords.latitude;
-        const endLng = userLocation.coords.longitude;
+        const totalSteps = 40;
+
+        const startLat = DEFAULT_BUS_OFFSETS[selectedBus].lat;
+        const startLng = DEFAULT_BUS_OFFSETS[selectedBus].lng;
+
+        const endLat = userLocation
+          ? userLocation.coords.latitude
+          : CITY_CENTER.lat;
+        const endLng = userLocation
+          ? userLocation.coords.longitude
+          : CITY_CENTER.lng;
 
         if (simIntervalRef.current) clearInterval(simIntervalRef.current);
 
