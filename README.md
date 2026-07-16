@@ -6,6 +6,7 @@
 
 [![Watch the Demo](https://img.youtube.com/vi/qxYwfYkcgio/maxresdefault.jpg)](https://youtube.com/shorts/qxYwfYkcgio)
 [👉 Watch the full app demonstration here on YouTube!](https://youtube.com/shorts/qxYwfYkcgio)
+
 [![GitHub Repo](https://img.shields.io/badge/GitHub-boikzdev-blue?logo=github)](https://github.com/boikzdev/School-Bus-Tracker)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Replit-FF0000?logo=replit)](https://replit.com/@boikunthadev/School-Bus-Tracker)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
